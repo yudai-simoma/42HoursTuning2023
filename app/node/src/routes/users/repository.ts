@@ -241,7 +241,7 @@ export const getUserForFilter = async (
   let userRows: RowDataPacket[];
   if (!userId) {
     [userRows] = await pool.query<RowDataPacket[]>(
-      "SELECT user_id, user_name, office_id, user_icon_id FROM user ORDER BY RAND() LIMIT 1"
+      "call get_rnd_usr( ROUND(RAND() * (select cnt from usr_cnt limit 1)) , 1)"
     );
   } else {
     [userRows] = await pool.query<RowDataPacket[]>(
@@ -249,7 +249,10 @@ export const getUserForFilter = async (
       [userId]
     );
   }
-  const user = userRows[0];
+  let user = userRows[0];
+	if (Array.isArray(user)) {
+    user = user[0];
+	}
 
   const [officeNameRow] = await pool.query<RowDataPacket[]>(
     `SELECT office_name FROM office WHERE office_id = ?`,
