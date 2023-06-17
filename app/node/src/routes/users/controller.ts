@@ -42,13 +42,11 @@ usersRouter.get(
         globalThis.pic_cache = new Map<string, Buffer>();
       }
       if(globalThis.pic_cache.get(path)) {
-        console.log('yup');
         data = globalThis.pic_cache.get(path);
       } else {
         const dta = execSync(`cat ${path}`, {
           shell: "/bin/bash",
         });
-        console.log('oi');
 
         globalThis.pic_cache.set(path, dta)
         data = globalThis.pic_cache.get(path);
