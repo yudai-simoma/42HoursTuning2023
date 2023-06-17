@@ -1,6 +1,6 @@
 SET @USR_CNT = (SELECT COUNT(user_id) FROM user);
 
-DROP PROCEDURE get_rnd_usr;
+DROP PROCEDURE IF EXISTS get_rnd_usr;
 DELIMITER $
 CREATE PROCEDURE get_rnd_usr(page_from INT, page_size INT)
 BEGIN
