@@ -84,3 +84,5 @@ CREATE TABLE `match_group_member` (
     `user_id` VARCHAR(36) NOT NULL,
     PRIMARY KEY (`match_group_id`, `user_id`)
 );
+
+-- CREATE INDEX idx_user_mail ON user(mail);
