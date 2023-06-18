@@ -19,3 +19,5 @@ CREATE TABLE IF NOT EXISTS usr_cnt (cnt int NOT NULL);
 insert into usr_cnt (cnt) values(@USR_CNT); 
 
 CREATE INDEX dprt_id ON department_role_member (user_id, belong);
+
+CREATE INDEX uid_lookup ON user (mail, password);

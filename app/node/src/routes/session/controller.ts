@@ -1,5 +1,4 @@
 import express from "express";
-import { execSync } from "child_process";
 import { v4 as uuidv4 } from "uuid";
 import { getUserIdByMailAndPassword } from "../users/repository";
 import {
@@ -8,6 +7,8 @@ import {
   getSessionBySessionId,
   deleteSessions,
 } from "./repository";
+
+const { createHash } = require('crypto');
 
 export const sessionRouter = express.Router();
 
@@ -19,6 +20,7 @@ sessionRouter.post(
     res: express.Response,
     next: express.NextFunction
   ) => {
+    
     if (
       !req.body.mail ||
       typeof req.body.mail !== "string" ||
@@ -33,14 +35,12 @@ sessionRouter.post(
     }
 
     const { mail, password }: { mail: string; password: string } = req.body;
+    const hashPassword = createHash('sha256').update(password).digest('hex')
 
-    const hashPassword = execSync(
-      `echo -n ${password} | shasum -a 256 | awk '{printf $1}'`,
-      { shell: "/bin/bash" }
-    ).toString();
 
     try {
       const userId = await getUserIdByMailAndPassword(mail, hashPassword);
+
       if (!userId) {
         res.status(401).json({
           message: "メールアドレスまたはパスワードが正しくありません。",
@@ -57,6 +57,7 @@ sessionRouter.post(
         });
         res.json(session);
         console.log("user already logged in");
+
         return;
       }
 
@@ -80,6 +81,7 @@ sessionRouter.post(
     } catch (e) {
       next(e);
     }
+
   }
 );
 
