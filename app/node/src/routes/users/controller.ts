@@ -8,6 +8,10 @@ import { getUsersByKeyword } from "./usecase";
 
 export const usersRouter = express.Router();
 
+declare global {
+  var pic_cache: Map<string, Buffer>;
+}
+
 // ユーザーアイコン画像取得API
 usersRouter.get(
   "/user-icon/:userIconId",
@@ -30,9 +34,32 @@ usersRouter.get(
       }
       const path = userIcon.path;
       // 500px x 500pxでリサイズ
-      const data = execSync(`convert ${path} -resize 500x500! PNG:-`, {
-        shell: "/bin/bash",
-      });
+      //const data = execSync(`convert ${path} -resize 500x500! PNG:-`, {
+        //shell: "/bin/bash",
+      //});
+      let data;
+      if (globalThis.pic_cache == undefined) {
+        globalThis.pic_cache = new Map<string, Buffer>();
+      }
+      if(globalThis.pic_cache.get(path)) {
+        data = globalThis.pic_cache.get(path);
+      } else {
+        const dta = execSync(`cat ${path}`, {
+          shell: "/bin/bash",
+        });
+
+        globalThis.pic_cache.set(path, dta)
+        data = globalThis.pic_cache.get(path);
+      }
+
+      if (data == undefined) {
+        data = '42';
+      }
+
+
+      //const data = execSync(`cat ${path}`, {
+       // shell: "/bin/bash",
+      //});
       res.status(200).json({
         fileName: userIcon.fileName,
         data: data.toString("base64"),
