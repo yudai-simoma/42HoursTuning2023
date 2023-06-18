@@ -21,3 +21,5 @@ insert into usr_cnt (cnt) values(@USR_CNT);
 CREATE INDEX dprt_id ON department_role_member (user_id, belong);
 
 CREATE INDEX uid_lookup ON user (mail, password);
+
+CREATE INDEX get_users ON user (entry_date, kana);
